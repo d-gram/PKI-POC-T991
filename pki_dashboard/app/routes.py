@@ -2,10 +2,11 @@ import os
 from flask import render_template, jsonify
 from app import app
 from app.utils import get_certificate_info
+from pathlib import Path
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('test.html')
 
 @app.route('/certificate/<path:cert_path>')
 def certificate_details(cert_path):
