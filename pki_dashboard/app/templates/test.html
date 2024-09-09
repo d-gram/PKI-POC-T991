@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>PKI Dashboard</title>
-       <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-   </head>
-   <body>
-       <header>
-           <h1>PKI Dashboard</h1>
-       </header>
+{% extends 'base.html' %}
+
+{% block content %}
        <main>
         <h2>Certificate List</h2>
         <ul id="certificate-list">
@@ -22,6 +13,4 @@
             <div class="flex-item">Data viewed here</div>
         </div>
        </main>
-       <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-   </body>
-   </html>
+{% endblock %}
