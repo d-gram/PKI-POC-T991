@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <main>
+    <div class="left">
         <h2>Certificate List</h2>
-        <ul id="certificate-list">
-        </ul>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search certificates..." />
+          </div>
+        <div class="certificate-list-container">
+            <ul id="certificate-list">
+            </ul>
+        </div>
 
         <div id="certificate-modal" class="modal">
             <div class="modal-content">
@@ -14,6 +19,16 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+    <div class="right">
+        <div class="log-list-container">
+            <h2 style="display: inline-block;">Activity Log</h2>
+            <button id="download-log-txt" class="download-button-txt">Download as .txt</button>
+            <button id="download-log-md" class="download-button-md">Download as .md</button>
+            <div class="activity-log-container">
+                <ul id="activity-log" class="activity-log"></ul>
+            </div>
+        </div>
+    </div>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
