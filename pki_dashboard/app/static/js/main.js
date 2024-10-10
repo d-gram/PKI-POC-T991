@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const addedCertificates = new Set();
                 data.forEach(cert => {
-                    const certName = cert.path.replace(/\.crt$/, '');
+                    const certName = cert.path.replace(/\.crt$|\.pem$|\.p12$/, '');
                     if (!addedCertificates.has(certName)) {
                         const li = document.createElement('li');
                         const a = document.createElement('a');

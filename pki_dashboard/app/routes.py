@@ -13,7 +13,7 @@ def api_certificates():
     cert_dir = '/certs'
     certs = set()
     for f in os.listdir(cert_dir):
-        if f.endswith('.crt'):
+        if f.endswith(('.crt', '.pem', '.p12')):
             certs.add(f)
     return jsonify([{'path': cert, 'subject': {'CN': cert.split('.')[0]}} for cert in certs])
 
