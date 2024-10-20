@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Analysis Dashboard - {{ page }}</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="icons8-favicon-pastel-glyph-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons8-favicon-pastel-glyph-32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icons8-favicon-pastel-glyph-96.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        #log-container {
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        nav {
+            margin-bottom: 20px;
+            background-color: #3498db;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 15px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #2980b9;
+        }
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Network Analysis Dashboard - {{ page }}</h1>
+    
+    <nav>
+        <a href="/">Home</a>
+        <a href="/page1">Page 1</a>
+        <a href="/page2">Page 2</a>
+        <a href="/page3">Page 3</a>
+    </nav>
+
+    <h2>Logs</h2>
+    <div id="log-container"></div>
+
+    <div>
+        <h3>Download Logs</h3>
+        <button onclick="downloadLogs('json')">Download JSON</button>
+        <button onclick="downloadLogs('csv')">Download CSV</button>
+        <button onclick="downloadLogs('txt')">Download TXT</button>
+    </div>
+
+    <div id="content">
+        {% if page == 'Home' %}
+            <p>Welcome to the Network Analysis Dashboard.</p>
+        {% elif page == 'Page 1' %}
+            <p>This is Page 1. It contains dummy content for testing purposes.</p>
+            <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+        {% elif page == 'Page 2' %}
+            <p>This is Page 2. It displays a sample table.</p>
+            <table>
+                <tr><th>Header 1</th><th>Header 2</th></tr>
+                <tr><td>Data 1</td><td>Data 2</td></tr>
+                <tr><td>Data 3</td><td>Data 4</td></tr>
+            </table>
+        {% elif page == 'Page 3' %}
+            <p>This is Page 3. It shows a sample form (non-functional).</p>
+            <form>
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name"><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email"><br><br>
+                <input type="submit" value="Submit">
+            </form>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        let socket;
+
+        function initializeSocket() {
+            if (!socket) {
+                socket = io({
+                    transports: ['websocket'],
+                    upgrade: false,
+                    forceNew: false
+                });
+
+                socket.on('connect', () => {
+                    console.log('Connected to server');
+                });
+
+                socket.on('initial_logs', (data) => {
+                    const logContainer = document.getElementById('log-container');
+                    logContainer.innerHTML = '';
+                    data.logs.forEach(addLogEntry);
+                });
+
+                socket.on('log_update', (data) => {
+                    addLogEntry(data.log);
+                });
+            }
+        }
+
+        function addLogEntry(logEntry) {
+            const logContainer = document.getElementById('log-container');
+            const logElement = document.createElement('div');
+            logElement.textContent = logEntry;
+            logContainer.appendChild(logElement);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function downloadLogs(format) {
+            window.location.href = `/download/${format}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeSocket);
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "443:443"
+    volumes:
+      - ./logs:/app/logs
+      - ./pkidashboard.ddns.net.pem:/app/pkidashboard.ddns.net.pem
+      - ./pkidashboard.ddns.net.key:/app/pkidashboard.ddns.net.key
+    environment:
+      - FLASK_ENV=production
+      - CERT_PATH=/app/pkidashboard.ddns.net.pem
+      - KEY_PATH=/app/pkidashboard.ddns.net.key
+    restart: always
